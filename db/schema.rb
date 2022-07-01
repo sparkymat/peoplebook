@@ -29,8 +29,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_01_132308) do
     t.bigint "person2_id"
     t.date "started_at"
     t.date "ended_at"
-    t.integer "started_at_resolution", default: 0
-    t.integer "ended_at_resolution", default: 0
+    t.integer "started_at_resolution", default: 0, null: false
+    t.integer "ended_at_resolution", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["person1_id"], name: "index_partnerships_on_person1_id"
@@ -38,10 +38,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_01_132308) do
   end
 
   create_table "people", force: :cascade do |t|
+    t.bigint "user_id"
     t.string "name"
     t.string "other_names", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_people_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
