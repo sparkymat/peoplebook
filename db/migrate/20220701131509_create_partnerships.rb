@@ -7,8 +7,8 @@ class CreatePartnerships < ActiveRecord::Migration[7.0]
       t.date :started_at
       t.date :ended_at
 
-      t.integer :started_at_resolution, default: 0
-      t.integer :ended_at_resolution, default: 0
+      t.integer :started_at_resolution, default: 0, null: false
+      t.integer :ended_at_resolution, default: 0, null: false
 
       t.timestamps
     end
