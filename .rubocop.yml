@@ -1,0 +1,28 @@
+inherit_gem:
+  prettier: rubocop.yml
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "bin/**/*"
+    - "db/schema.rb"
+    - "vendor/**/*"
+
+Layout/LineLength:
+  Max: 200
+
+Metrics/MethodLength:
+  Max: 30
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+  Exclude:
+    - "config/application.rb"
+    - "app/channels/application_cable/connection.rb"
+    - "app/channels/application_cable/channel.rb"
+
+Layout/HashAlignment:
+  EnforcedColonStyle: table
