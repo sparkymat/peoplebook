@@ -5,6 +5,7 @@ class CreatePeople < ActiveRecord::Migration[7.0]
       t.references :user
       t.string :name
       t.string :other_names, array: true, default: []
+      t.string :gender, null: false
 
       t.timestamps
     end
