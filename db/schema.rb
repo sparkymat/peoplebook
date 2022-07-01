@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_01_124355) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_01_131509) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "partnerships", force: :cascade do |t|
+    t.bigint "person1_id"
+    t.bigint "person2_id"
+    t.date "started_at"
+    t.date "ended_at"
+    t.integer "started_at_resolution", default: 0
+    t.integer "ended_at_resolution", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person1_id"], name: "index_partnerships_on_person1_id"
+    t.index ["person2_id"], name: "index_partnerships_on_person2_id"
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "name"
+    t.string "other_names", default: [], array: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "name", default: "", null: false
@@ -27,4 +47,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_01_124355) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "partnerships", "people", column: "person1_id"
+  add_foreign_key "partnerships", "people", column: "person2_id"
 end
