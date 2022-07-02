@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_02_091510) do
     t.bigint "from_id", null: false
     t.bigint "to_id", null: false
     t.string "relation_type", null: false
+    t.string "relation_chain", default: [], array: true
     t.date "started_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
