@@ -9,10 +9,10 @@ development:
 
 test:
   <<: *default
-  database: PeopleBook_test
+  database: peoplebook_test
 
 production:
   <<: *default
-  database: PeopleBook_production
-  username: PeopleBook
+  database: peoplebook_production
+  username: peoplebook
   password: <%= ENV["PEOPLEBOOK_DATABASE_PASSWORD"] %>

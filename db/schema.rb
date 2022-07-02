@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_01_132308) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_02_091510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "child_relations", force: :cascade do |t|
     t.bigint "child_id"
     t.bigint "partnership_id"
-    t.integer "relation_type", default: 0, null: false
+    t.string "relation_type", default: "regular", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["child_id"], name: "index_child_relations_on_child_id"
@@ -29,8 +29,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_01_132308) do
     t.bigint "person2_id"
     t.date "started_at"
     t.date "ended_at"
-    t.integer "started_at_resolution", default: 0, null: false
-    t.integer "ended_at_resolution", default: 0, null: false
+    t.string "started_at_resolution", default: "day", null: false
+    t.string "ended_at_resolution", default: "day", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["person1_id"], name: "index_partnerships_on_person1_id"
@@ -45,6 +45,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_01_132308) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_people_on_user_id"
+  end
+
+  create_table "relations", force: :cascade do |t|
+    t.bigint "from_id", null: false
+    t.bigint "to_id", null: false
+    t.string "relation_type", null: false
+    t.date "started_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["from_id"], name: "index_relations_on_from_id"
+    t.index ["to_id"], name: "index_relations_on_to_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -63,4 +74,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_01_132308) do
   add_foreign_key "child_relations", "people", column: "child_id"
   add_foreign_key "partnerships", "people", column: "person1_id"
   add_foreign_key "partnerships", "people", column: "person2_id"
+  add_foreign_key "relations", "people", column: "from_id"
+  add_foreign_key "relations", "people", column: "to_id"
 end
