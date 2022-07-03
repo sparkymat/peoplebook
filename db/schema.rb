@@ -29,8 +29,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_02_091510) do
     t.bigint "person2_id"
     t.date "started_at"
     t.date "ended_at"
-    t.string "started_at_resolution", default: "day", null: false
-    t.string "ended_at_resolution", default: "day", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["person1_id"], name: "index_partnerships_on_person1_id"

@@ -7,9 +7,6 @@ class CreatePartnerships < ActiveRecord::Migration[7.0]
       t.date :started_at
       t.date :ended_at
 
-      t.string :started_at_resolution, default: "day", null: false
-      t.string :ended_at_resolution, default: "day", null: false
-
       t.timestamps
     end
   end
