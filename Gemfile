@@ -13,6 +13,7 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
 gem "devise"
 gem "rspec-rails"
+gem "seed-fu", "~> 2.3"
 gem "slim-rails"
 
 group :development, :test do
