@@ -25,29 +25,101 @@ has_one :adopted_child_relation, -> { merge(ChildRelation.adopted) }, foreign_ke
   end
 
   def regular_child_relations
+    parents = regular_child_relation.partnership.slice(:person1, :person2).values
+
+    relations = parents.map do |rel|
+      {
+        relation: :parent,
+        person: rel,
+        links: [
+          "ChildRelation##{regular_child_relation.id}",
+          "Partnership##{regular_child_relation.partnership_id}",
+        ]
+      }
+    end
+
+    sibling_relations = ChildRelation.regular.where(partnership_id: regular_child_relation.partnership_id).where.not(id: regular_child_relation.id)
+    relations += sibling_relations.map do |rel|
+      {
+        relation: :sibling,
+        person: rel.child,
+        links: [
+          "ChildRelation##{regular_child_relation.id}",
+          "Partnership##{regular_child_relation.partnership_id}",
+          "ChildRelation##{rel.id}",
+        ]
+      }
+    end
+
+    relations
+  end
+
+  def adopted_child_relations
+    parents = adopted_child_relation.partnership.slice(:person1, :person2).values
+
+    relations = parents.map do |rel|
+      {
+        relation: :adopted_parent,
+        person: rel,
+        links: [
+          "ChildRelation##{adopted_child_relation.id}",
+          "Partnership##{adopted_child_relation.partnership_id}",
+        ]
+      }
+    end
+
+    sibling_relations = ChildRelation.where(partnership_id: adopted_child_relation.partnership_id).where.not(id: adopted_child_relation.id)
+    relations += sibling_relations.map do |rel|
+      {
+        relation: :adopted_sibling,
+        person: rel.child,
+        links: [
+          "ChildRelation##{adopted_child_relation.id}",
+          "Partnership##{adopted_child_relation.partnership_id}",
+          "ChildRelation##{rel.id}",
+        ]
+      }
+    end
+
+    relations
+  end
+
+  def biological_child_relations
+    parents = biological_child_relation.partnership.slice(:person1, :person2).values
+
+    relations = parents.map do |rel|
+      {
+        relation: :biological_parent,
+        person: rel,
+        links: [
+          "ChildRelation##{biological_child_relation.id}",
+          "Partnership##{biological_child_relation.partnership_id}",
+        ]
+      }
+    end
+
+    sibling_relations = ChildRelation.where(partnership_id: biological_child_relation.partnership_id).where.not(id: biological_child_relation.id)
+    relations += sibling_relations.map do |rel|
+      {
+        relation: :biological_sibling,
+        person: rel.child,
+        links: [
+          "ChildRelation##{biological_child_relation.id}",
+          "Partnership##{biological_child_relation.partnership_id}",
+          "ChildRelation##{rel.id}",
+        ]
+      }
+    end
+
+    relations
   end
 
   def relations
     relations = []
 
-    # As a regular child
-    if regular_child_relation&.partnership.present?
-
-      parents = regular_child_relation.partnership.slice(:person1, :person2).values
-
-      relations += parents.map do |p|
-        {
-          relation: :parent,
-          person: p,
-          links: [
-            "ChildRelation##{regular_child_relation.id}",
-            "Partnership##{regular_child_relation.partnership_id}",
-          ]
-        }
-      end
-    end
-
-    # As a parent
+    relations += regular_child_relations if regular_child_relation.present?
+    relations += adopted_child_relations if adopted_child_relation.present?
+    relations += biological_child_relations if biological_child_relation.present?
     
     relations
   end
