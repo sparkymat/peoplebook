@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+Person.seed(:id,
+  {id:  1, user_id: 1, gender: :male,   name: "Harry Potter"},
+  {id:  2, user_id: 1, gender: :male,   name: "James Potter"},
+  {id:  3, user_id: 1, gender: :female, name: "Lily Potter"},
+  {id:  4, user_id: 1, gender: :male,   name: "Arthur Weasley"},
+  {id:  5, user_id: 1, gender: :female, name: "Molly Weasley"},
+  {id:  6, user_id: 1, gender: :male,   name: "Bill Weasley"},
+  {id:  7, user_id: 1, gender: :male,   name: "Charlie Weasley"},
+  {id:  8, user_id: 1, gender: :male,   name: "Percy Weasley"},
+  {id:  9, user_id: 1, gender: :male,   name: "Fred Weasley"},
+  {id: 10, user_id: 1, gender: :male,   name: "George Weasley"},
+  {id: 11, user_id: 1, gender: :male,   name: "Ron Weasley"},
+  {id: 12, user_id: 1, gender: :female, name: "Ginny Weasley"},
+)
