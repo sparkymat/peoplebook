@@ -2,13 +2,17 @@
 class Person < ApplicationRecord
   has_one :regular_child_relation, -> { merge(ChildRelation.regular) }, foreign_key: :child_id, class_name: "ChildRelation"
   has_one :biological_child_relation, -> { merge(ChildRelation.biological) }, foreign_key: :child_id, class_name: "ChildRelation"
-has_one :adopted_child_relation, -> { merge(ChildRelation.adopted) }, foreign_key: :child_id, class_name: "ChildRelation"
+  has_one :adopted_child_relation, -> { merge(ChildRelation.adopted) }, foreign_key: :child_id, class_name: "ChildRelation"
 
   enum gender: {
     male:   "male",
     female: "female",
     other:  "other",
   }
+
+  def partnerships
+    Partnership.for_person(id)
+  end
 
   def self.sibling_relation(gender)
     {
@@ -114,12 +118,45 @@ has_one :adopted_child_relation, -> { merge(ChildRelation.adopted) }, foreign_ke
     relations
   end
 
+  def partners_and_children
+    relations = []
+
+    relations  += partnerships.map do |p|
+      {
+        relation: p.ended_at.present? ? :ex_partner : :partner,
+        person: p.slice(:person1, :person2).values.reject{|person| person.id == id },
+        links: [
+          "Partnership##{p.id}",
+        ]
+      }
+    end
+
+    relations += partnerships.flat_map(&:child_relations).map do |rel|
+      {
+        relation: {
+          "regular" => :child,
+          "adopted" => :adopted_child,
+          "biological" => :biological_child,
+        }[rel.relation_type],
+        person: rel.child,
+        links: [
+            "Partnership##{rel.partnership_id}",
+            "ChildRelation##{rel.id}",
+        ]
+      }
+    end
+
+    relations
+  end
+
   def relations
     relations = []
 
     relations += regular_child_relations if regular_child_relation.present?
     relations += adopted_child_relations if adopted_child_relation.present?
     relations += biological_child_relations if biological_child_relation.present?
+
+    relations += partners_and_children
     
     relations
   end
