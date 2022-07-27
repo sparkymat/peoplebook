@@ -1,0 +1,10 @@
+h3 = @person.name
+
+h3 Relatives
+- @relations.each do |r|
+  h3 = r[:relation]
+  p
+    = link_to person_path(r[:person]) do
+      span
+        | Name:
+        = r[:person].name

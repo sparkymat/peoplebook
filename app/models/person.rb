@@ -124,7 +124,7 @@ class Person < ApplicationRecord
     relations  += partnerships.map do |p|
       {
         relation: p.ended_at.present? ? :ex_partner : :partner,
-        person: p.slice(:person1, :person2).values.reject{|person| person.id == id },
+        person: p.slice(:person1, :person2).values.reject{|person| person.id == id }.first,
         links: [
           "Partnership##{p.id}",
         ]
