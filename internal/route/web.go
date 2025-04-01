@@ -1,17 +1,24 @@
 package route
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"net/http"
+
+	"github.com/rs/zerolog"
 	"github.com/sparkymat/peoplebook/internal/handler"
+	"github.com/sparkymat/peoplebook/internal/middleware"
 )
 
-func registerWebRoutes(app *echo.Group, cfg ConfigService) {
-	webApp := app.Group("")
+func registerWebRoutes(log zerolog.Logger, router *http.ServeMux, _ ConfigService) {
+	handleFunc(log, router, "GET /", handler.Home)
+}
 
-	webApp.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
-		TokenLookup: "form:csrf",
-	}))
+func handleFunc(log zerolog.Logger, router *http.ServeMux, route string, handlerFunc http.HandlerFunc) {
+	handlerFunc = middleware.WrapMiddleware(
+		[]middleware.MiddlewareFunc{
+			middleware.RequestLogger(log),
+		},
+		handlerFunc,
+	)
 
-	webApp.GET("/", handler.Home())
+	router.HandleFunc(route, handlerFunc)
 }

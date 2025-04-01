@@ -1,16 +1,15 @@
 package main
 
 import (
+	"net/http"
 	"os"
 	"time"
 
-	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/sparkymat/peoplebook/internal/config"
 	"github.com/sparkymat/peoplebook/internal/database"
 	"github.com/sparkymat/peoplebook/internal/route"
-	"github.com/ziflex/lecho/v3"
 )
 
 var Version = "development"
@@ -32,8 +31,6 @@ func main() {
 		panic(err)
 	}
 
-	e := echo.New()
-
 	zl := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
 	// zl.FormatLevel = func(i interface{}) string {
 	// 	return strings.ToUpper(fmt.Sprintf("| %-6s|", i))
@@ -48,9 +45,22 @@ func main() {
 	// 	return strings.ToUpper(fmt.Sprintf("%s", i))
 	// }
 
-	e.Logger = lecho.From(log.Output(zl))
+	log := zerolog.New(zl).With().Timestamp().Logger()
 
-	route.Setup(e, cfg)
+	router, err := route.SetupRouter(log, cfg)
+	if err != nil {
+		log.Error().Msg(err.Error())
+		panic(err)
+	}
 
-	e.Logger.Panic(e.Start(":8080"))
+	server := http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+
+	log.Info().Msg("Starting server on port :8080")
+
+	if err := server.ListenAndServe(); err != nil {
+		panic(err)
+	}
 }

@@ -1,32 +1,24 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/a-h/templ"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
-func getCSRFToken(c echo.Context) string {
-	csrfTokenVal := c.Get(middleware.DefaultCSRFConfig.ContextKey)
-	if csrfTokenVal == nil {
-		return ""
-	}
-
-	csrfToken, ok := csrfTokenVal.(string)
-	if !ok {
-		return ""
-	}
-
-	return csrfToken
-}
-
-func Render(c echo.Context, statusCode int, t templ.Component) error {
+func Render(w http.ResponseWriter, r *http.Request, statusCode int, t templ.Component) {
 	buf := templ.GetBuffer()
 	defer templ.ReleaseBuffer(buf)
 
-	if err := t.Render(c.Request().Context(), buf); err != nil {
-		return err
+	if err := t.Render(r.Context(), buf); err != nil {
+		w.Header().Add("Content-Type", "text/html")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("failed"))
+
+		return
 	}
 
-	return c.HTML(statusCode, buf.String())
+	w.Header().Add("Content-Type", "text/html")
+	w.WriteHeader(statusCode)
+	w.Write(buf.Bytes())
 }
